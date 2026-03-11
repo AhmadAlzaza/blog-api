@@ -6,8 +6,8 @@ A RESTful API for a blogging platform built with Laravel 11 and Sanctum authenti
 
 ## Tech Stack
 
-- **PHP** 8.3
-- **Laravel** 11
+- **PHP** ^8.2
+- **Laravel** 12
 - **MySQL**
 - **Laravel Sanctum** (Authentication)
 

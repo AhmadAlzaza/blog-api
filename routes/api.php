@@ -13,13 +13,13 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
-    Route::apiResource('post',PostController::class)->only(['show','index']);
+    Route::apiResource('posts',PostController::class)->only(['show','index']);
     Route::get('/tags',[TagController::class,'index']);
     Route::apiResource('posts.comments', CommentController::class)->only(['index', 'show']);
     Route::apiResource('posts.tags',TagController::class)->only(['index','show']);
     Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::apiResource('post',PostController::class)->only(['store','update','destroy']);
+    Route::apiResource('posts',PostController::class)->only(['store','update','destroy']);
     Route::apiResource('posts.comments', CommentController::class)->only(['store', 'update', 'destroy']);
     Route::apiResource('posts.tags', TagController::class)->only(['store', 'update', 'destroy']);
 

@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Models\Tag;
+use App\Models\Post;
 class TagController extends Controller
 {
     /**
@@ -11,38 +12,77 @@ class TagController extends Controller
      */
     public function index()
     {
-        //
+        $tag = Tag::paginate(15);
+        return response()->json($tag);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request,string $post_id)
     {
-        //
+        $post = Post::FindOrFail($post_id);
+        $validate = $request->validate([
+            'name' => 'required'
+        ]);
+
+         $tag = Tag::firstOrCreate(['name' => $validate['name'] ]);
+        $post->tags()->attach($tag->id);
+        return response()->json($post->tags);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $post,string $id)
     {
-        //
+        $tag = Tag::FindOrFail($id);
+        $post = Post::FindOrFail($post);
+        if($post->tags()->where('tag_id',$tag->id)->exists())
+        {
+            return response()->json($tag);
+        }
+        else{
+            return response()->json(['message' => 'No tag for this post']);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request,string $post, string $id)
     {
-        //
+        $post = Post::FindOrFail($post);
+        $tag = Tag::FindOrFail($id);
+        $validate = $request->validate(['name'=>'required']);
+        if($post->tags()->where('tag_id',$tag->id)->exists())
+        {
+            $tag->update(['name'=>$validate['name']]);
+            return response()->json($tag);
+        }
+        else
+        {
+            return response()->json(['message'=>'This tag not belong to this post ']);
+
+        }
+
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $post,string $id)
     {
-        //
+        $tag = Tag::FindOrFail($id);
+        $post = Post::FindOrFail($post);
+        if($post->tags()->where('tag_id',$tag->id)->exists())
+        {
+            $post->tags()->detach($tag->id);
+            return response()->json(['message'=>'Tag deleted']);
+        }
+        else
+        {
+            return response()->json(['message'=>'This tag not belong to this post ']);
+        }
     }
 }

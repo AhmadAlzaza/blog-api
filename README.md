@@ -100,6 +100,20 @@ A token is returned automatically upon **register** or **login**.
 
 ---
 
+## Postman Collection
+
+A full Postman collection is included in the repository: `blog-api.postman_collection.json`
+
+It contains all 18 endpoints with example requests for:
+- Auth (Register, Login, Logout)
+- Posts (CRUD)
+- Comments (CRUD)
+- Tags (CRUD)
+
+To use it: open Postman → Import → select the file.
+
+---
+
 ## Notes
 
 - Pagination is applied on all listing endpoints (15 items per page)

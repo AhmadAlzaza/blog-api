@@ -1,59 +1,109 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Blog API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A RESTful API for a blogging platform built with Laravel 11 and Sanctum authentication.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Tech Stack
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **PHP** 8.3
+- **Laravel** 11
+- **MySQL**
+- **Laravel Sanctum** (Authentication)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Installation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+```bash
+# Clone the repository
+git clone https://github.com/AhmadAlzaza/blog-api.git
+cd blog-api
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+# Install dependencies
+composer install
 
-## Laravel Sponsors
+# Copy environment file
+cp .env.example .env
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Configure your database in .env
+DB_DATABASE=blog_api
+DB_USERNAME=root
+DB_PASSWORD=
 
-### Premium Partners
+# Generate app key
+php artisan key:generate
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+# Run migrations
+php artisan migrate
 
-## Contributing
+# Install Sanctum
+php artisan install:api
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Start the server
+php artisan serve
+```
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## API Endpoints
 
-## Security Vulnerabilities
+### Authentication
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/register` | No | Register and receive token |
+| POST | `/api/login` | No | Login and receive token |
+| POST | `/api/logout` | Yes | Logout current session |
 
-## License
+### Posts
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/post` | No | Get all posts (paginated) |
+| GET | `/api/post/{id}` | No | Get a single post |
+| POST | `/api/post` | Yes | Create a new post |
+| PUT | `/api/post/{id}` | Yes | Update a post |
+| DELETE | `/api/post/{id}` | Yes | Delete a post |
+
+### Comments
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/posts/{post}/comments` | No | Get all comments for a post |
+| GET | `/api/posts/{post}/comments/{comment}` | No | Get a single comment |
+| POST | `/api/posts/{post}/comments` | Yes | Add a comment to a post |
+| PUT | `/api/posts/{post}/comments/{comment}` | Yes | Update a comment |
+| DELETE | `/api/posts/{post}/comments/{comment}` | Yes | Delete a comment |
+
+### Tags
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/tags` | No | Get all tags |
+| GET | `/api/posts/{post}/tags/{tag}` | No | Get a tag for a post |
+| POST | `/api/posts/{post}/tags` | Yes | Add a tag to a post |
+| PUT | `/api/posts/{post}/tags/{tag}` | Yes | Update a tag |
+| DELETE | `/api/posts/{post}/tags/{tag}` | Yes | Remove a tag from a post |
+
+---
+
+## Authentication
+
+All protected routes require a Bearer token in the request header:
+
+```
+Authorization: Bearer {token}
+```
+
+A token is returned automatically upon **register** or **login**.
+
+---
+
+## Notes
+
+- Pagination is applied on all listing endpoints (15 items per page)
+- Users can only **update** or **delete** their own posts and comments
+- Tags use `firstOrCreate` — adding an existing tag will reuse it instead of creating a duplicate
+- Removing a tag from a post does **not** delete the tag itself, only the association
+- Posts and comments are linked via nested routes for clear REST structure

@@ -57,8 +57,13 @@ class TagController extends Controller
         $tag = Tag::FindorFail($id);
         $validate = $request->validate(['name'=>'required']);
         $post->tags()->detach($tag->id);
+        if($tag->posts()->count()==0)
+        {
+            $tag->delete();
+        }
         $newtag = Tag::firstOrCreate(['name' => $validate['name'] ]);
         $post->tags()->attach($newtag->id);
+
         return response()->json($newtag);
     }
 

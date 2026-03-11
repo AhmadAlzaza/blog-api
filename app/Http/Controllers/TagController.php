@@ -52,20 +52,14 @@ class TagController extends Controller
      */
     public function update(Request $request,string $post, string $id)
     {
+
         $post = Post::FindOrFail($post);
-        $tag = Tag::FindOrFail($id);
+        $tag = Tag::FindorFail($id);
         $validate = $request->validate(['name'=>'required']);
-        if($post->tags()->where('tag_id',$tag->id)->exists())
-        {
-            $tag->update(['name'=>$validate['name']]);
-            return response()->json($tag);
-        }
-        else
-        {
-            return response()->json(['message'=>'This tag not belong to this post ']);
-
-        }
-
+        $post->tags()->detach($tag->id);
+        $newtag = Tag::firstOrCreate(['name' => $validate['name'] ]);
+        $post->tags()->attach($newtag->id);
+        return response()->json($newtag);
     }
 
     /**

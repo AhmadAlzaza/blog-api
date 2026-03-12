@@ -1,6 +1,6 @@
 # Blog API
 
-A RESTful API for a blogging platform built with Laravel 11 and Sanctum authentication.
+A RESTful API for a blogging platform built with Laravel 12 and Sanctum authentication.
 
 ---
 
@@ -10,6 +10,8 @@ A RESTful API for a blogging platform built with Laravel 11 and Sanctum authenti
 - **Laravel** 12
 - **MySQL**
 - **Laravel Sanctum** (Authentication)
+- **Form Requests** (Validation)
+- **API Resources** (Response Transformation)
 
 ---
 
@@ -60,11 +62,11 @@ php artisan serve
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
-| GET | `/api/post` | No | Get all posts (paginated) |
-| GET | `/api/post/{id}` | No | Get a single post |
-| POST | `/api/post` | Yes | Create a new post |
-| PUT | `/api/post/{id}` | Yes | Update a post |
-| DELETE | `/api/post/{id}` | Yes | Delete a post |
+| GET | `/api/posts` | No | Get all posts (paginated) |
+| GET | `/api/posts/{id}` | No | Get a single post |
+| POST | `/api/posts` | Yes | Create a new post |
+| PUT | `/api/posts/{id}` | Yes | Update a post |
+| DELETE | `/api/posts/{id}` | Yes | Delete a post |
 
 ### Comments
 
@@ -120,4 +122,7 @@ To use it: open Postman → Import → select the file.
 - Users can only **update** or **delete** their own posts and comments
 - Tags use `firstOrCreate` — adding an existing tag will reuse it instead of creating a duplicate
 - Removing a tag from a post does **not** delete the tag itself, only the association
+- Unused tags are automatically deleted after being replaced
 - Posts and comments are linked via nested routes for clear REST structure
+- All responses are formatted using API Resources
+- Validation is handled via Form Requests

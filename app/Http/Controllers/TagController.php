@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Tag;
 use App\Models\Post;
+use App\Http\Requests\StoreTagRequest;
+use App\Http\Requests\UpdateTagRequest;
 class TagController extends Controller
 {
     /**
@@ -19,14 +21,10 @@ class TagController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request,string $post_id)
+    public function store(StoreTagRequest $request,string $post_id)
     {
         $post = Post::FindOrFail($post_id);
-        $validate = $request->validate([
-            'name' => 'required'
-        ]);
-
-         $tag = Tag::firstOrCreate(['name' => $validate['name'] ]);
+         $tag = Tag::firstOrCreate(['name' => $request['name'] ]);
         $post->tags()->attach($tag->id);
         return response()->json($post->tags);
     }
@@ -50,18 +48,17 @@ class TagController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request,string $post, string $id)
+    public function update(UpdateTagRequest $request,string $post, string $id)
     {
 
         $post = Post::FindOrFail($post);
         $tag = Tag::FindorFail($id);
-        $validate = $request->validate(['name'=>'required']);
         $post->tags()->detach($tag->id);
         if($tag->posts()->count()==0)
         {
             $tag->delete();
         }
-        $newtag = Tag::firstOrCreate(['name' => $validate['name'] ]);
+        $newtag = Tag::firstOrCreate(['name' => $request['name'] ]);
         $post->tags()->attach($newtag->id);
 
         return response()->json($newtag);

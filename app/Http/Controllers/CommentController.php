@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\Comment;
+use App\Http\Requests\StoreCommentRequest;
+use App\Http\Requests\UpdateCommentRequest;
 
 class CommentController extends Controller
 {
@@ -22,15 +24,14 @@ class CommentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(string $post,Request $request)
+    public function store(string $post,StoreCommentRequest $request)
     {
         $post = Post::FindOrFail($post);
-        $validate = $request->validate(['body'=>'required']);
         $comment = Comment::create(
             [
                 'user_id' => $request->user()->id,
                 'post_id' => $post->id,
-                'body' => $validate['body']
+                'body' => $request['body']
             ]
         );
         return response()->json($comment);
@@ -53,22 +54,20 @@ class CommentController extends Controller
 
 
 
-     public function update(Request $request, string $post,string $comment)
+     public function update(UpdateCommentRequest $request, string $post,string $comment)
      {
          $post = Post::FindOrFail($post);
          $comment = Comment::FindOrFail($comment);
          if ($comment->post_id != $post->id) {
             return response()->json(['message' => 'Not Found'], 404);
         }
-         $validate = $request->validate([
-             'body' => 'required'
-         ]);
+
          if($request->user()->id != $comment->user_id)
          {
              return response()->json(['message' => 'Unauthorized'], 403);
          }
          $comment->update([
-             'body' => $validate['body']
+             'body' => $request['body']
          ]);
          return response()->json($comment);
      }

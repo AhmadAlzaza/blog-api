@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\User;
+use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest;
 class PostController extends Controller
 {
     /**
@@ -20,16 +22,13 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-        public function store(Request $request)
+        public function store(StorePostRequest $request)
         {
-            $validate = $request->validate([
-                'title' => 'required',
-                    'body' => 'required | min:30'
-            ]);
+
                 $post = Post::create([
                 'user_id' => $request->user()->id,
-                'title' => $validate['title'],
-                'body' => $validate['body']
+                'title' => $request['title'],
+                'body' => $request['body']
                 ]);
                 return response()->json($post);
 
@@ -47,21 +46,17 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdatePostRequest $request, string $id)
     {
         $post = Post::FindOrFail($id);
-        $validate = $request->validate([
-            'title' => 'required',
-                'body' => 'required | min:30'
-        ]);
         if($post->user_id != $request->user()->id)
         {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         $post->update([
-           'title' => $validate['title'],
-                'body' => $validate['body']
+           'title' => $request['title'],
+                'body' => $request['body']
 
         ]);
 

@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\Comment;
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
+use App\Http\Resources\CommentResource;
 
 class CommentController extends Controller
 {
@@ -16,8 +17,11 @@ class CommentController extends Controller
     public function index(string $post)
     {
         $post = Post::FindOrFail($post);
-        $comments = $post->comments()->paginate(15);
-        return response()->json($comments);
+        $comment = $post->comments()->with('user','post')->paginate(15);
+        //return response()->json($comment);
+        return CommentResource::collection($comment);
+
+
 
     }
 
@@ -34,7 +38,7 @@ class CommentController extends Controller
                 'body' => $request['body']
             ]
         );
-        return response()->json($comment);
+        return new CommentResource($comment);
     }
 
 
@@ -45,7 +49,7 @@ class CommentController extends Controller
     {
 
         $comment = Comment::FindOrFail($comment);
-        return response()->json($comment);
+        return new CommentResource($comment);
     }
 
     /**
@@ -69,7 +73,7 @@ class CommentController extends Controller
          $comment->update([
              'body' => $request['body']
          ]);
-         return response()->json($comment);
+         return new CommentResource($comment);
      }
     /**
      * Remove the specified resource from storage.
@@ -86,6 +90,6 @@ class CommentController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
         $comment->delete();
-        return response()->json('comment deleted');
+        return response()->json(['message'=>'comment deleted']);
     }
 }

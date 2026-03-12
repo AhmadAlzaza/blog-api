@@ -7,6 +7,7 @@ use App\Models\Tag;
 use App\Models\Post;
 use App\Http\Requests\StoreTagRequest;
 use App\Http\Requests\UpdateTagRequest;
+use App\Http\Resources\TagResource;
 class TagController extends Controller
 {
     /**
@@ -14,8 +15,8 @@ class TagController extends Controller
      */
     public function index()
     {
-        $tag = Tag::paginate(15);
-        return response()->json($tag);
+        return TagResource::collection(Tag::paginate(15));
+
     }
 
     /**
@@ -26,7 +27,8 @@ class TagController extends Controller
         $post = Post::FindOrFail($post_id);
          $tag = Tag::firstOrCreate(['name' => $request['name'] ]);
         $post->tags()->attach($tag->id);
-        return response()->json($post->tags);
+        return new TagResource($tag);
+        //return response()->json($post->tags);
     }
 
     /**
@@ -38,7 +40,9 @@ class TagController extends Controller
         $post = Post::FindOrFail($post);
         if($post->tags()->where('tag_id',$tag->id)->exists())
         {
-            return response()->json($tag);
+        //    return response()->json($tag);
+        return new TagResource($tag);
+
         }
         else{
             return response()->json(['message' => 'No tag for this post']);
@@ -61,7 +65,9 @@ class TagController extends Controller
         $newtag = Tag::firstOrCreate(['name' => $request['name'] ]);
         $post->tags()->attach($newtag->id);
 
-        return response()->json($newtag);
+        //return response()->json($newtag);
+        return new TagResource($newtag);
+
     }
 
     /**

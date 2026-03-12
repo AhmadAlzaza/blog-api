@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\User;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use App\Http\Resources\PostResource;
 class PostController extends Controller
 {
     /**
@@ -14,9 +15,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        return response()->json(
-            Post::paginate(15)
-        );
+        return PostResource::collection(Post::paginate(15));
+
     }
 
     /**
@@ -30,7 +30,7 @@ class PostController extends Controller
                 'title' => $request['title'],
                 'body' => $request['body']
                 ]);
-                return response()->json($post);
+                return new PostResource($post);
 
             }
 
@@ -40,7 +40,7 @@ class PostController extends Controller
     public function show(string $id)
     {
         $post = Post::FindOrFail($id);
-        return response()->json($post);
+        return new PostResource($post);
     }
 
     /**
@@ -60,7 +60,7 @@ class PostController extends Controller
 
         ]);
 
-        return response()->json($post);
+        return new PostResource($post);
     }
 
     /**
@@ -74,7 +74,7 @@ class PostController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
         $post->delete();
-        return response()->json('Post deleted');
+        return response()->json(['message'=>'Post deleted']);
 
     }
 }

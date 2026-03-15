@@ -16,7 +16,7 @@ class CommentController extends Controller
      */
     public function index(string $post)
     {
-        $post = Post::FindOrFail($post);
+        $post = Post::findOrFail($post);
         $comment = $post->comments()->with('user', 'post')->paginate(15);
         return CommentResource::collection($comment);
     }
@@ -26,7 +26,7 @@ class CommentController extends Controller
      */
     public function store(string $post, StoreCommentRequest $request)
     {
-        $post = Post::FindOrFail($post);
+        $post = Post::findOrFail($post);
         $comment = Comment::create(
             [
                 'user_id' => $request->user()->id,
@@ -44,7 +44,7 @@ class CommentController extends Controller
     public function show(string $post, string $comment)
     {
 
-        $comment = Comment::FindOrFail($comment);
+        $comment = Comment::findOrFail($comment);
         return new CommentResource($comment->load('user', 'post'));
     }
 
@@ -56,8 +56,8 @@ class CommentController extends Controller
 
     public function update(UpdateCommentRequest $request, string $post, string $comment)
     {
-        $post = Post::FindOrFail($post);
-        $comment = Comment::FindOrFail($comment);
+        $post = Post::findOrFail($post);
+        $comment = Comment::findOrFail($comment);
         if ($comment->post_id != $post->id) {
             return response()->json(['message' => 'Not Found'], 404);
         }
@@ -76,7 +76,7 @@ class CommentController extends Controller
     public function destroy(int $post, Request $request, string $comment)
     {
 
-        $comment = Comment::FindOrFail($comment);
+        $comment = Comment::findOrFail($comment);
         if ($comment->post_id != (int) $post) {
             return response()->json(['message' => 'Not Found'], 404);
         }

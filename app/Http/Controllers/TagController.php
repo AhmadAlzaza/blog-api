@@ -27,7 +27,7 @@ class TagController extends Controller
     public function store(StoreTagRequest $request, string $post_id)
     {
 
-        $post = Post::FindOrFail($post_id);
+        $post = Post::findOrFail($post_id);
 
         $tag = Tag::firstOrCreate(['name' => $request['name']]);
         $post->tags()->attach($tag->id);
@@ -39,8 +39,8 @@ class TagController extends Controller
      */
     public function show(string $post, string $id)
     {
-        $tag = Tag::FindOrFail($id);
-        $post = Post::FindOrFail($post);
+        $tag = Tag::findOrFail($id);
+        $post = Post::findOrFail($post);
         if ($post->tags()->where('tag_id', $tag->id)->exists()) {
             return new TagResource($tag->load('user', 'post'));
         } else {
@@ -54,11 +54,11 @@ class TagController extends Controller
     public function update(UpdateTagRequest $request, string $post, string $id)
     {
 
-        $post = Post::FindOrFail($post);
+        $post = Post::findOrFail($post);
         if ($post->user_id != $request->user()->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
-        $tag = Tag::FindorFail($id);
+        $tag = Tag::findOrFail($id);
         $post->tags()->detach($tag->id);
         if ($tag->posts()->count() == 0) {
             $tag->delete();
@@ -73,8 +73,8 @@ class TagController extends Controller
      */
     public function destroy(Request $request, string $post, string $id)
     {
-        $tag = Tag::FindOrFail($id);
-        $post = Post::FindOrFail($post);
+        $tag = Tag::findOrFail($id);
+        $post = Post::findOrFail($post);
         if ($post->user_id != $request->user()->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }

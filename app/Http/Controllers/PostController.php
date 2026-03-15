@@ -38,7 +38,7 @@ class PostController extends Controller
      */
     public function show(string $id)
     {
-        $post = Post::FindOrFail($id);
+        $post = Post::findOrFail($id);
         return new PostResource($post->load('user', 'post'));
     }
 
@@ -47,7 +47,7 @@ class PostController extends Controller
      */
     public function update(UpdatePostRequest $request, string $id)
     {
-        $post = Post::FindOrFail($id);
+        $post = Post::findOrFail($id);
         if ($post->user_id != $request->user()->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
@@ -66,7 +66,7 @@ class PostController extends Controller
      */
     public function destroy(Request $request, string $id)
     {
-        $post = Post::FindOrFail($id);
+        $post = Post::findOrFail($id);
         if ($post->user_id != $request->user()->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }

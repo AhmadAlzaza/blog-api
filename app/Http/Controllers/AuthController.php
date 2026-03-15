@@ -8,17 +8,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+
 class AuthController extends Controller
 {
     public function register(RegisterRequest $request)
     {
-        /*
-        $user = User::create($request->validate([
-            'name' => 'required',
-            'email' => 'required |email | unique:users',
-            'password' => 'required | min:8'
-        ]));
-*/
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -29,25 +23,21 @@ class AuthController extends Controller
         return response()->json([
             'token' => $token,
             'user' => $user,
-            'message'=>'Register has been successfully'
-
-        ]);
+            'message' => 'Register has been successfully'
+        ], 201);
     }
     public function login(LoginRequest $request)
     {
 
-         $auth =  Auth::attempt(['email' => $request->email, 'password' => $request->password]);
-        if($auth)
-        {
+        $auth =  Auth::attempt(['email' => $request->email, 'password' => $request->password]);
+        if ($auth) {
             $user = $request->user();
             $token = $user->createToken('auth_token')->plainTextToken;
             return response()->json([
-                'token'=>$token,
+                'token' => $token,
                 'message' => 'Login successfully'
             ]);
-        }
-        else
-        {
+        } else {
             return response()->json([
                 'message' => 'Invalid credentials'
             ], 401);
@@ -62,4 +52,3 @@ class AuthController extends Controller
         return response()->json(['message' => 'Logged out successfully']);
     }
 }
-

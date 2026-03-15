@@ -6,15 +6,25 @@ use App\Models\User;
 //use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 class AuthController extends Controller
 {
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
+        /*
         $user = User::create($request->validate([
             'name' => 'required',
             'email' => 'required |email | unique:users',
             'password' => 'required | min:8'
         ]));
+*/
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => $request->password
+        ]);
+
         $token = $user->createToken('auth_token')->plainTextToken;
         return response()->json([
             'token' => $token,
@@ -23,7 +33,7 @@ class AuthController extends Controller
 
         ]);
     }
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
 
          $auth =  Auth::attempt(['email' => $request->email, 'password' => $request->password]);

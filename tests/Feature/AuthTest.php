@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Str;
 use App\Models\User;
 use Tests\TestCase;
+use Illuminate\Http\JsonResponse;
 
 class AuthTest extends TestCase
 {
@@ -33,6 +34,8 @@ class AuthTest extends TestCase
             'email'=> $user->email,
             'password' => '123456789'
         ]);
+      //  dd($response->json());
+
         $response->assertJsonStructure(['token']);
         $response->assertStatus(200);
     }

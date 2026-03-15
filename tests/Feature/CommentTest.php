@@ -16,7 +16,7 @@ class CommentTest extends TestCase
     /**
      * A basic feature test example.
      */
-    public function test_can_user_make_inex(): void
+    public function test_can_user_make_index(): void
     {
         $user = User::factory()->create();
         $post = Post::factory()->create(['user_id'=>$user->id]);

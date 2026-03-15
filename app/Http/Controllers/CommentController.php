@@ -37,7 +37,7 @@ class CommentController extends Controller
                 'body' => $request['body']
             ]
         );
-        return new CommentResource($comment);
+        return new CommentResource($comment->load('user','post'));
     }
 
 
@@ -48,7 +48,8 @@ class CommentController extends Controller
     {
 
         $comment = Comment::FindOrFail($comment);
-        return new CommentResource($comment);
+        return new CommentResource($comment->load('user','post'));
+
     }
 
     /**
@@ -72,7 +73,8 @@ class CommentController extends Controller
          $comment->update([
              'body' => $request['body']
          ]);
-         return new CommentResource($comment);
+        return new CommentResource($comment->load('user','post'));
+
      }
     /**
      * Remove the specified resource from storage.

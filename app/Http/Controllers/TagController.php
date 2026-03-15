@@ -28,7 +28,6 @@ class TagController extends Controller
          $tag = Tag::firstOrCreate(['name' => $request['name'] ]);
         $post->tags()->attach($tag->id);
         return new TagResource($tag);
-        //return response()->json($post->tags);
     }
 
     /**
@@ -40,7 +39,6 @@ class TagController extends Controller
         $post = Post::FindOrFail($post);
         if($post->tags()->where('tag_id',$tag->id)->exists())
         {
-        //    return response()->json($tag);
         return new TagResource($tag);
 
         }
@@ -64,8 +62,6 @@ class TagController extends Controller
         }
         $newtag = Tag::firstOrCreate(['name' => $request['name'] ]);
         $post->tags()->attach($newtag->id);
-
-        //return response()->json($newtag);
         return new TagResource($newtag);
 
     }

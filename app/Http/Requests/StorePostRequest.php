@@ -23,7 +23,7 @@ class StorePostRequest extends FormRequest
     {
         return [
             'title' => 'required',
-            'body' => 'required | min:30'
+            'body' => 'required|min:30'
         ];
     }
 }

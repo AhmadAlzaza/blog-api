@@ -18,7 +18,6 @@ class CommentController extends Controller
     {
         $post = Post::FindOrFail($post);
         $comment = $post->comments()->with('user','post')->paginate(15);
-        //return response()->json($comment);
         return CommentResource::collection($comment);
 
 

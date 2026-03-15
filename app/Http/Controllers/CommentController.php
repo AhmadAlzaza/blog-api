@@ -17,17 +17,14 @@ class CommentController extends Controller
     public function index(string $post)
     {
         $post = Post::FindOrFail($post);
-        $comment = $post->comments()->with('user','post')->paginate(15);
+        $comment = $post->comments()->with('user', 'post')->paginate(15);
         return CommentResource::collection($comment);
-
-
-
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(string $post,StoreCommentRequest $request)
+    public function store(string $post, StoreCommentRequest $request)
     {
         $post = Post::FindOrFail($post);
         $comment = Comment::create(
@@ -37,19 +34,18 @@ class CommentController extends Controller
                 'body' => $request['body']
             ]
         );
-        return new CommentResource($comment->load('user','post'));
+        return (new CommentResource($comment->load('user', 'post')))->response()->setStatusCode(201);
     }
 
 
     /**
      * Display the specified resource.
      */
-    public function show(string $post,string $comment)
+    public function show(string $post, string $comment)
     {
 
         $comment = Comment::FindOrFail($comment);
-        return new CommentResource($comment->load('user','post'));
-
+        return new CommentResource($comment->load('user', 'post'));
     }
 
     /**
@@ -58,39 +54,36 @@ class CommentController extends Controller
 
 
 
-     public function update(UpdateCommentRequest $request, string $post,string $comment)
-     {
-         $post = Post::FindOrFail($post);
-         $comment = Comment::FindOrFail($comment);
-         if ($comment->post_id != $post->id) {
+    public function update(UpdateCommentRequest $request, string $post, string $comment)
+    {
+        $post = Post::FindOrFail($post);
+        $comment = Comment::FindOrFail($comment);
+        if ($comment->post_id != $post->id) {
             return response()->json(['message' => 'Not Found'], 404);
         }
 
-         if($request->user()->id != $comment->user_id)
-         {
-             return response()->json(['message' => 'Unauthorized'], 403);
-         }
-         $comment->update([
-             'body' => $request['body']
-         ]);
-        return new CommentResource($comment->load('user','post'));
-
-     }
+        if ($request->user()->id != $comment->user_id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        $comment->update([
+            'body' => $request['body']
+        ]);
+        return new CommentResource($comment->load('user', 'post'));
+    }
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $post,Request $request,string $comment)
+    public function destroy(int $post, Request $request, string $comment)
     {
 
         $comment = Comment::FindOrFail($comment);
-        if ($comment->post_id != $post) {
+        if ($comment->post_id != (int) $post) {
             return response()->json(['message' => 'Not Found'], 404);
         }
-        if($request->user()->id != $comment->user_id)
-        {
+        if ($request->user()->id != $comment->user_id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
         $comment->delete();
-        return response()->json(['message'=>'comment deleted']);
+        return response()->json(['message' => 'comment deleted']);
     }
 }

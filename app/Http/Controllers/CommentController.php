@@ -73,11 +73,12 @@ class CommentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(int $post, Request $request, string $comment)
+    public function destroy(string $post, Request $request, string $comment)
     {
 
         $comment = Comment::findOrFail($comment);
-        if ($comment->post_id != (int) $post) {
+        $post = Post::findOrFail($post);
+        if ($comment->post_id != $post->id) {
             return response()->json(['message' => 'Not Found'], 404);
         }
         if ($request->user()->id != $comment->user_id) {

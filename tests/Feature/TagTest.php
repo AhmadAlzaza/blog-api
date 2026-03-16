@@ -42,7 +42,7 @@ class TagTest extends TestCase
             'name' => Str::random(12)
         ]);
         $response->assertJsonStructure(['data' => ['id', 'name']]);
-        $response->assertStatus(201);
+        $response->assertStatus(200);
     }
     public function test_user_can_delete_tag(): void
     {

@@ -8,7 +8,6 @@ use App\Models\Post;
 use App\Http\Requests\StoreTagRequest;
 use App\Http\Requests\UpdateTagRequest;
 use App\Http\Resources\TagResource;
-use App\Models\User;
 
 class TagController extends Controller
 {
@@ -28,7 +27,9 @@ class TagController extends Controller
     {
 
         $post = Post::findOrFail($post_id);
-
+        if ($post->user_id != $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
         $tag = Tag::firstOrCreate(['name' => $request['name']]);
         $post->tags()->attach($tag->id);
         return (new TagResource($tag))->response()->setStatusCode(201);
@@ -42,7 +43,7 @@ class TagController extends Controller
         $tag = Tag::findOrFail($id);
         $post = Post::findOrFail($post);
         if ($post->tags()->where('tag_id', $tag->id)->exists()) {
-            return new TagResource($tag->load('user', 'post'));
+            return new TagResource($tag);
         } else {
             return response()->json(['message' => 'No tag for this post']);
         }
@@ -65,7 +66,7 @@ class TagController extends Controller
         }
         $newtag = Tag::firstOrCreate(['name' => $request['name']]);
         $post->tags()->attach($newtag->id);
-        return new TagResource($newtag);
+        return (new TagResource($newtag))->response()->setStatusCode(200);
     }
 
     /**

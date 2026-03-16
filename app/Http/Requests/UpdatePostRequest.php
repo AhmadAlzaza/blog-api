@@ -22,8 +22,8 @@ class UpdatePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required',
-            'body' => 'required|min:30'
+            'title' => 'sometimes|required',
+            'body' => 'sometimes|required|min:30'
         ];
     }
 }

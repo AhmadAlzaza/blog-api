@@ -6,9 +6,10 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\TagController;
+use App\Http\Resources\UserResource;
 
 Route::get('/user', function (Request $request) {
-    return $request->user();
+    return new UserResource($request->user());
 })->middleware('auth:sanctum');
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -22,3 +23,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('posts.comments', CommentController::class)->only(['store', 'update', 'destroy']);
     Route::apiResource('posts.tags', TagController::class)->only(['store', 'update', 'destroy']);
 });
+/*using UserResource*/

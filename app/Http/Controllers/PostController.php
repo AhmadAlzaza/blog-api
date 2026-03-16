@@ -51,11 +51,7 @@ class PostController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        $post->update([
-            'title' => $request['title'],
-            'body' => $request['body']
-
-        ]);
+        $post->update($request->only(['title', 'body']));
 
         return new PostResource($post);
     }

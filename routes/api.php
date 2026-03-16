@@ -23,4 +23,3 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('posts.comments', CommentController::class)->only(['store', 'update', 'destroy']);
     Route::apiResource('posts.tags', TagController::class)->only(['store', 'update', 'destroy']);
 });
-/*using UserResource*/

@@ -53,7 +53,7 @@ class PostController extends Controller
 
         $post->update($request->only(['title', 'body']));
 
-        return new PostResource($post);
+        return new PostResource($post->load('user'));
     }
 
     /**

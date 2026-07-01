@@ -7,12 +7,13 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\TagController;
 use App\Http\Resources\UserResource;
-
+/*
 Route::get('/user', function (Request $request) {
     return new UserResource($request->user());
-})->middleware('auth:sanctum');
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+})->middleware('auth:sanctum');*/
+
+Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:5,1');
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 Route::apiResource('posts', PostController::class)->only(['show', 'index']);
 Route::get('/tags', [TagController::class, 'index']);
 Route::apiResource('posts.comments', CommentController::class)->only(['index', 'show']);

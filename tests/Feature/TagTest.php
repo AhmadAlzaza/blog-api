@@ -49,6 +49,7 @@ class TagTest extends TestCase
         $user = User::factory()->create();
         $post = Post::factory()->create(['user_id' => $user->id]);
         $tag = Tag::factory()->create();
+        $post->tags()->attach($tag->id);
         $response = $this->actingAs($user, 'sanctum')->deleteJson('/api/posts/' . $post->id . '/tags/' . $tag->id);
         $response->assertJsonStructure(['message']);
         $response->assertStatus(200);

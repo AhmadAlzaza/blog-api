@@ -43,8 +43,11 @@ class CommentController extends Controller
      */
     public function show(string $post, string $comment)
     {
-
+        $post = Post::findOrFail($post);
         $comment = Comment::findOrFail($comment);
+        if ($comment->post_id != $post->id) {
+            return response()->json(['message' => 'Not Found'], 404);
+        }
         return new CommentResource($comment->load('user', 'post'));
     }
 

@@ -45,7 +45,7 @@ class TagController extends Controller
         if ($post->tags()->where('tag_id', $tag->id)->exists()) {
             return new TagResource($tag);
         } else {
-            return response()->json(['message' => 'No tag for this post']);
+            return response()->json(['message' => 'No tag for this post'], 404);
         }
     }
 
@@ -81,9 +81,9 @@ class TagController extends Controller
         }
         if ($post->tags()->where('tag_id', $tag->id)->exists()) {
             $post->tags()->detach($tag->id);
-            return response()->json(['message' => 'Tag deleted']);
+            return response()->json(['message' => 'Tag deleted'], 200);
         } else {
-            return response()->json(['message' => 'This tag not belong to this post ']);
+            return response()->json(['message' => 'This tag not belong to this post '], 404);
         }
     }
 }

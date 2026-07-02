@@ -7,152 +7,87 @@
   },
   "item": [
     {
-      "name": "Update Post",
-      "request": {
-        "method": "PUT",
-        "header": [
-          {
-            "key": "Accept",
-            "value": "application/json",
-            "type": "text"
-          },
-          {
-            "key": "Authorization",
-            "value": "Bearer 2|a1tSA1OmlDL96yAUq2o8SPZNN0x4iELVuKbFL2sJ6387fde0",
-            "type": "text"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\r\n    \"title\": \"My First Post Edited\",\r\n    \"body\": \"This is the body of my first post in the blog API Edited\"\r\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "http://localhost:8000/api/post/1",
-          "protocol": "http",
-          "host": [
-            "localhost"
-          ],
-          "port": "8000",
-          "path": [
-            "api",
-            "post",
-            "1"
-          ]
-        }
-      },
-      "response": []
+  "name": "Update Post",
+  "request": {
+    "method": "PUT",
+    "header": [
+      { "key": "Accept", "value": "application/json", "type": "text" },
+      { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+    ],
+    "body": {
+      "mode": "raw",
+      "raw": "{\r\n    \"title\": \"My First Post Edited\",\r\n    \"body\": \"This is the body of my first post in the blog API Edited\"\r\n}",
+      "options": { "raw": { "language": "json" } }
     },
+    "url": {
+      "raw": "http://localhost:8000/api/posts/1",
+      "protocol": "http",
+      "host": ["localhost"],
+      "port": "8000",
+      "path": ["api", "posts", "1"]
+    }
+  },
+  "response": []
+},
     {
-      "name": "Get Post",
-      "request": {
-        "method": "GET",
-        "header": [
-          {
-            "key": "Accept",
-            "value": "application/json",
-            "type": "text"
-          }
-        ],
-        "url": {
-          "raw": "http://localhost:8000/api/post/1",
-          "protocol": "http",
-          "host": [
-            "localhost"
-          ],
-          "port": "8000",
-          "path": [
-            "api",
-            "post",
-            "1"
-          ]
-        }
-      },
-      "response": []
-    },
+  "name": "Get Post",
+  "request": {
+    "method": "GET",
+    "header": [
+      { "key": "Accept", "value": "application/json", "type": "text" }
+    ],
+    "url": {
+      "raw": "http://localhost:8000/api/posts/1",
+      "protocol": "http",
+      "host": ["localhost"],
+      "port": "8000",
+      "path": ["api", "posts", "1"]
+    }
+  },
+  "response": []
+},
     {
-      "name": "Create Post",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Accept",
-            "value": "application/json",
-            "type": "text"
-          },
-          {
-            "key": "Authorization",
-            "value": "Bearer 2|a1tSA1OmlDL96yAUq2o8SPZNN0x4iELVuKbFL2sJ6387fde0",
-            "type": "text"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\r\n    \"title\": \"My First Post\",\r\n    \"body\": \"This is the body of my first post in the blog API\"\r\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "http://localhost:8000/api/post",
-          "protocol": "http",
-          "host": [
-            "localhost"
-          ],
-          "port": "8000",
-          "path": [
-            "api",
-            "post"
-          ]
-        }
-      },
-      "response": []
+  "name": "Create Post",
+  "request": {
+    "method": "POST",
+    "header": [
+      { "key": "Accept", "value": "application/json", "type": "text" },
+      { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+    ],
+    "body": {
+      "mode": "raw",
+      "raw": "{\r\n    \"title\": \"My First Post\",\r\n    \"body\": \"This is the body of my first post in the blog API\"\r\n}",
+      "options": { "raw": { "language": "json" } }
     },
+    "url": {
+      "raw": "http://localhost:8000/api/posts",
+      "protocol": "http",
+      "host": ["localhost"],
+      "port": "8000",
+      "path": ["api", "posts"]
+    }
+  },
+  "response": []
+},
     {
-      "name": "Get All Posts",
-      "protocolProfileBehavior": {
-        "disableBodyPruning": true
-      },
-      "request": {
-        "method": "GET",
-        "header": [
-          {
-            "key": "Accept",
-            "value": "application/json",
-            "type": "text"
-          },
-          {
-            "key": "Authorization",
-            "value": "Bearer 2|a1tSA1OmlDL96yAUq2o8SPZNN0x4iELVuKbFL2sJ6387fde0",
-            "type": "text",
-            "disabled": true
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": ""
-        },
-        "url": {
-          "raw": "http://localhost:8000/api/post",
-          "protocol": "http",
-          "host": [
-            "localhost"
-          ],
-          "port": "8000",
-          "path": [
-            "api",
-            "post"
-          ]
-        }
-      },
-      "response": []
-    },
+  "name": "Get All Posts",
+  "protocolProfileBehavior": { "disableBodyPruning": true },
+  "request": {
+    "method": "GET",
+    "header": [
+      { "key": "Accept", "value": "application/json", "type": "text" }
+    ],
+    "body": { "mode": "raw", "raw": "" },
+    "url": {
+      "raw": "http://localhost:8000/api/posts",
+      "protocol": "http",
+      "host": ["localhost"],
+      "port": "8000",
+      "path": ["api", "posts"]
+    }
+  },
+  "response": []
+},
     {
       "name": "Logout",
       "request": {
@@ -266,46 +201,24 @@
       "response": []
     },
     {
-      "name": "Delete Post",
-      "request": {
-        "method": "DELETE",
-        "header": [
-          {
-            "key": "Accept",
-            "value": "application/json",
-            "type": "text"
-          },
-          {
-            "key": "Authorization",
-            "value": "Bearer 2|a1tSA1OmlDL96yAUq2o8SPZNN0x4iELVuKbFL2sJ6387fde0",
-            "type": "text"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "http://localhost:8000/api/post/1",
-          "protocol": "http",
-          "host": [
-            "localhost"
-          ],
-          "port": "8000",
-          "path": [
-            "api",
-            "post",
-            "1"
-          ]
-        }
-      },
-      "response": []
-    },
+  "name": "Delete Post",
+  "request": {
+    "method": "DELETE",
+    "header": [
+      { "key": "Accept", "value": "application/json", "type": "text" },
+      { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+    ],
+    "body": { "mode": "raw", "raw": "", "options": { "raw": { "language": "json" } } },
+    "url": {
+      "raw": "http://localhost:8000/api/posts/1",
+      "protocol": "http",
+      "host": ["localhost"],
+      "port": "8000",
+      "path": ["api", "posts", "1"]
+    }
+  },
+  "response": []
+},
     {
       "name": "Create Comment",
       "request": {

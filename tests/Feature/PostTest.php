@@ -53,4 +53,102 @@ class PostTest extends TestCase
         $response->assertJsonStructure(['message']);
         $response->assertStatus(200);
     }
+    public function test_user_cannot_update_others_post(): void
+    {
+        $owner = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $post = Post::factory()->create(['user_id' => $owner->id]);
+
+        $response = $this->actingAs($otherUser, 'sanctum')->putJson('api/posts/' . $post->id, [
+            'title' => Str::random(10),
+            'body' => Str::random(50)
+        ]);
+
+        $response->assertStatus(403);
+        $response->assertJson(['message' => 'Unauthorized']);
+    }
+    public function test_user_cannot_delete_others_post(): void
+    {
+        $owner = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $post = Post::factory()->create(['user_id' => $owner->id]);
+
+        $response = $this->actingAs($otherUser, 'sanctum')->deleteJson('/api/posts/' . $post->id);
+
+        $response->assertStatus(403);
+        $response->assertJson(['message' => 'Unauthorized']);
+    }
+    public function test_creating_post_without_title_fails_validation(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user, 'sanctum')->postJson('/api/posts', [
+            'body' => Str::random(50)
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['title']);
+    }
+
+    public function test_creating_post_without_body_fails_validation(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user, 'sanctum')->postJson('/api/posts', [
+            'title' => Str::random(10)
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['body']);
+    }
+
+    public function test_creating_post_with_short_body_fails_validation(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user, 'sanctum')->postJson('/api/posts', [
+            'title' => Str::random(10),
+            'body' => Str::random(10) // أقل من 30
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['body']);
+    }
+
+    public function test_updating_post_with_empty_title_fails_validation(): void
+    {
+        $user = User::factory()->create();
+        $post = Post::factory()->create(['user_id' => $user->id]);
+
+        $response = $this->actingAs($user, 'sanctum')->putJson('/api/posts/' . $post->id, [
+            'title' => ''
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['title']);
+    }
+
+    public function test_updating_post_with_short_body_fails_validation(): void
+    {
+        $user = User::factory()->create();
+        $post = Post::factory()->create(['user_id' => $user->id]);
+
+        $response = $this->actingAs($user, 'sanctum')->putJson('/api/posts/' . $post->id, [
+            'body' => Str::random(10)
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['body']);
+    }
+
+    public function test_updating_post_with_no_fields_is_allowed(): void
+    {
+
+        $user = User::factory()->create();
+        $post = Post::factory()->create(['user_id' => $user->id]);
+
+        $response = $this->actingAs($user, 'sanctum')->putJson('/api/posts/' . $post->id, []);
+
+        $response->assertStatus(200);
+    }
 }

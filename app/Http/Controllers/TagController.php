@@ -31,6 +31,9 @@ class TagController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
         $tag = Tag::firstOrCreate(['name' => $request['name']]);
+        if ($post->tags()->where('tag_id', $tag->id)->exists()) {
+            return response()->json(['message' => 'Tag already attached to this post'], 409);
+        }
         $post->tags()->attach($tag->id);
         return (new TagResource($tag))->response()->setStatusCode(201);
     }

@@ -38,6 +38,8 @@ class TagTest extends TestCase
         $user = User::factory()->create();
         $post = Post::factory()->create(['user_id' => $user->id]);
         $tag = Tag::factory()->create();
+        $post->tags()->attach($tag->id);
+
         $response = $this->actingAs($user, 'sanctum')->putJson('/api/posts/' . $post->id . '/tags/' . $tag->id, [
             'name' => Str::random(12)
         ]);

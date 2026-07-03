@@ -57,19 +57,24 @@ class TagController extends Controller
      */
     public function update(UpdateTagRequest $request, string $post, string $id)
     {
-
         $post = Post::findOrFail($post);
+
+        // 1. التحقق من ملكية المنشور
         if ($post->user_id != $request->user()->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
+
         $tag = Tag::findOrFail($id);
-        $post->tags()->detach($tag->id);
-        if ($tag->posts()->count() == 0) {
-            $tag->delete();
+
+        // 2. التأكد أن الوسم مرتبط فعلاً بهذا المنشور
+        if (!$post->tags()->where('tag_id', $tag->id)->exists()) {
+            return response()->json(['message' => 'Tag not found for this post'], 404);
         }
-        $newtag = Tag::firstOrCreate(['name' => $request['name']]);
-        $post->tags()->attach($newtag->id);
-        return (new TagResource($newtag))->response()->setStatusCode(200);
+
+        // 3. تحديث الاسم فقط
+        $tag->update(['name' => $request->name]);
+
+        return (new TagResource($tag))->response()->setStatusCode(200);
     }
 
     /**

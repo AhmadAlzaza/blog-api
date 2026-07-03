@@ -7,6 +7,9 @@ use App\Models\Post;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Http\Resources\PostResource;
+use App\Actions\Post\CreatePostAction;
+use App\Actions\Post\UpdatePostAction;
+use App\Actions\Post\DeletePostAction;
 
 class PostController extends Controller
 {
@@ -21,14 +24,10 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePostRequest $request)
+    public function store(StorePostRequest $request, CreatePostAction $action)
     {
+        $post = $action->execute($request->user()->id, $request->only(['title', 'body']));
 
-        $post = Post::create([
-            'user_id' => $request->user()->id,
-            'title' => $request['title'],
-            'body' => $request['body']
-        ]);
         return (new PostResource($post))->response()->setStatusCode(201);
     }
 
@@ -44,23 +43,23 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePostRequest $request, Post $post)
+    public function update(UpdatePostRequest $request, Post $post, UpdatePostAction $action)
     {
         $this->authorize('update', $post);
 
-        $post->update($request->only(['title', 'body']));
+        $updatedPost = $action->execute($post, $request->only(['title', 'body']));
 
-        return new PostResource($post->load('user'));
+        return new PostResource($updatedPost->load('user'));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, Post $post)
+    public function destroy(Post $post, DeletePostAction $action)
     {
         $this->authorize('delete', $post);
 
-        $post->delete();
+        $action->execute($post);
 
         return response()->json(['message' => 'Post deleted']);
     }

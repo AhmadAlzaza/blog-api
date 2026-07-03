@@ -85,7 +85,7 @@ class TagTest extends TestCase
         ]);
 
         $response->assertStatus(403);
-        $response->assertJson(['message' => 'Unauthorized']);
+        $response->assertJson(['message' => 'This action is unauthorized.']);
     }
     public function test_user_cannot_update_tag_on_others_post(): void
     {
@@ -100,7 +100,7 @@ class TagTest extends TestCase
         ]);
 
         $response->assertStatus(403);
-        $response->assertJson(['message' => 'Unauthorized']);
+        $response->assertJson(['message' => 'This action is unauthorized.']);
     }
     public function test_user_cannot_delete_tag_on_others_post(): void
     {
@@ -113,7 +113,7 @@ class TagTest extends TestCase
         $response = $this->actingAs($otherUser, 'sanctum')->deleteJson('/api/posts/' . $post->id . '/tags/' . $tag->id);
 
         $response->assertStatus(403);
-        $response->assertJson(['message' => 'Unauthorized']);
+        $response->assertJson(['message' => 'This action is unauthorized.']);
     }
     public function test_creating_tag_without_name_fails_validation(): void
     {

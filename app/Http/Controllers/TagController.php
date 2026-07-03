@@ -2,96 +2,83 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Tag;
 use App\Models\Post;
+use App\Models\Tag;
 use App\Http\Requests\StoreTagRequest;
 use App\Http\Requests\UpdateTagRequest;
 use App\Http\Resources\TagResource;
+use App\Actions\Tag\AttachTagAction;
+use App\Actions\Tag\UpdateTagAction;
+use App\Actions\Tag\DetachTagAction;
 
 class TagController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * عرض جميع الوسوم (عام).
      */
     public function index()
     {
-
         return TagResource::collection(Tag::paginate(15));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * إضافة وسم إلى منشور (فقط لمالك المنشور).
      */
-    public function store(StoreTagRequest $request, string $post_id)
+    public function store(StoreTagRequest $request, Post $post, AttachTagAction $action)
     {
+        $this->authorize('update', $post);
 
-        $post = Post::findOrFail($post_id);
-        if ($post->user_id != $request->user()->id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-        $tag = Tag::firstOrCreate(['name' => $request['name']]);
-        if ($post->tags()->where('tag_id', $tag->id)->exists()) {
+        // فحص ما إذا كان التاغ بنفس الاسم مرتبطاً مسبقاً
+        if ($post->tags()->where('name', $request->name)->exists()) {
             return response()->json(['message' => 'Tag already attached to this post'], 409);
         }
-        $post->tags()->attach($tag->id);
+
+        $tag = $action->execute($post, $request->name);
+
         return (new TagResource($tag))->response()->setStatusCode(201);
     }
 
     /**
-     * Display the specified resource.
+     * عرض وسم مرتبط بمنشور معين.
      */
-    public function show(string $post, string $id)
+    public function show(Post $post, Tag $tag)
     {
-        $tag = Tag::findOrFail($id);
-        $post = Post::findOrFail($post);
-        if ($post->tags()->where('tag_id', $tag->id)->exists()) {
-            return new TagResource($tag);
-        } else {
-            return response()->json(['message' => 'No tag for this post'], 404);
+        if (!$post->tags()->where('tag_id', $tag->id)->exists()) {
+            abort(404);
         }
+
+        return new TagResource($tag);
     }
 
     /**
-     * Update the specified resource in storage.
+     * تعديل اسم وسم مرتبط بمنشور (فقط لمالك المنشور).
      */
-    public function update(UpdateTagRequest $request, string $post, string $id)
+    public function update(UpdateTagRequest $request, Post $post, Tag $tag, UpdateTagAction $action)
     {
-        $post = Post::findOrFail($post);
-
-
-        if ($post->user_id != $request->user()->id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        $tag = Tag::findOrFail($id);
-
+        $this->authorize('update', $post);
 
         if (!$post->tags()->where('tag_id', $tag->id)->exists()) {
             return response()->json(['message' => 'Tag not found for this post'], 404);
         }
 
+        $updatedTag = $action->execute($tag, $request->name);
 
-        $tag->update(['name' => $request->name]);
-
-        return (new TagResource($tag))->response()->setStatusCode(200);
+        return (new TagResource($updatedTag))->response()->setStatusCode(200);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * حذف وسم من منشور (فقط لمالك المنشور).
      */
-    public function destroy(Request $request, string $post, string $id)
+    public function destroy(Post $post, Tag $tag, DetachTagAction $action)
     {
-        $tag = Tag::findOrFail($id);
-        $post = Post::findOrFail($post);
-        if ($post->user_id != $request->user()->id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+        $this->authorize('delete', $post);
+
+        if (!$post->tags()->where('tag_id', $tag->id)->exists()) {
+            return response()->json(['message' => 'This tag not belong to this post'], 404);
         }
-        if ($post->tags()->where('tag_id', $tag->id)->exists()) {
-            $post->tags()->detach($tag->id);
-            return response()->json(['message' => 'Tag deleted'], 200);
-        } else {
-            return response()->json(['message' => 'This tag not belong to this post '], 404);
-        }
+
+        $action->execute($post, $tag);
+
+        return response()->json(['message' => 'Tag deleted'], 200);
     }
 }

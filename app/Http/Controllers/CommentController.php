@@ -57,37 +57,32 @@ class CommentController extends Controller
 
 
 
-    public function update(UpdateCommentRequest $request, string $post, string $comment)
+    public function update(UpdateCommentRequest $request, Post $post, Comment $comment)
     {
-        $post = Post::findOrFail($post);
-        $comment = Comment::findOrFail($comment);
-        if ($comment->post_id != $post->id) {
-            return response()->json(['message' => 'Not Found'], 404);
+
+        if ($comment->post_id !== $post->id) {
+            abort(404);
         }
 
-        if ($request->user()->id != $comment->user_id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-        $comment->update([
-            'body' => $request['body']
-        ]);
+        $this->authorize('update', $comment);
+
+        $comment->update(['body' => $request->body]);
+
         return new CommentResource($comment->load('user', 'post'));
     }
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $post, Request $request, string $comment)
+    public function destroy(Post $post, Comment $comment)
     {
+        if ($comment->post_id !== $post->id) {
+            abort(404);
+        }
 
-        $comment = Comment::findOrFail($comment);
-        $post = Post::findOrFail($post);
-        if ($comment->post_id != $post->id) {
-            return response()->json(['message' => 'Not Found'], 404);
-        }
-        if ($request->user()->id != $comment->user_id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
+        $this->authorize('delete', $comment);
+
         $comment->delete();
+
         return response()->json(['message' => 'Comment Deleted']);
     }
 }

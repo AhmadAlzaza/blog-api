@@ -44,12 +44,9 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePostRequest $request, string $id)
+    public function update(UpdatePostRequest $request, Post $post)
     {
-        $post = Post::findOrFail($id);
-        if ($post->user_id != $request->user()->id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
+        $this->authorize('update', $post);
 
         $post->update($request->only(['title', 'body']));
 
@@ -59,13 +56,12 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, string $id)
+    public function destroy(Request $request, Post $post)
     {
-        $post = Post::findOrFail($id);
-        if ($post->user_id != $request->user()->id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
+        $this->authorize('delete', $post);
+
         $post->delete();
+
         return response()->json(['message' => 'Post deleted']);
     }
 }

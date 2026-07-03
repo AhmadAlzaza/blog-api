@@ -72,7 +72,7 @@ class CommentTest extends TestCase
         ]);
 
         $response->assertStatus(403);
-        $response->assertJson(['message' => 'Unauthorized']);
+        $response->assertJson(['message' => 'This action is unauthorized.']);
     }
     public function test_user_cannot_delete_others_comment(): void
     {
@@ -87,7 +87,7 @@ class CommentTest extends TestCase
         $response = $this->actingAs($otherUser, 'sanctum')->deleteJson('/api/posts/' . $post->id . '/comments/' . $comment->id);
 
         $response->assertStatus(403);
-        $response->assertJson(['message' => 'Unauthorized']);
+        $response->assertJson(['message' => 'This action is unauthorized.']);
     }
     public function test_creating_comment_without_body_fails_validation(): void
     {

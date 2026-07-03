@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Illuminate\Support\Str;
+use Illuminate\Auth\Access\AuthorizationException;
 use App\Models\Post;
 
 class PostTest extends TestCase
@@ -65,7 +66,7 @@ class PostTest extends TestCase
         ]);
 
         $response->assertStatus(403);
-        $response->assertJson(['message' => 'Unauthorized']);
+        $response->assertJson(['message' => 'This action is unauthorized.']);
     }
     public function test_user_cannot_delete_others_post(): void
     {
@@ -76,7 +77,7 @@ class PostTest extends TestCase
         $response = $this->actingAs($otherUser, 'sanctum')->deleteJson('/api/posts/' . $post->id);
 
         $response->assertStatus(403);
-        $response->assertJson(['message' => 'Unauthorized']);
+        $response->assertJson(['message' => 'This action is unauthorized.']);
     }
     public function test_creating_post_without_title_fails_validation(): void
     {
